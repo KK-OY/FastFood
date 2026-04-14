@@ -11,7 +11,7 @@ public class BaseContext {
     public static Long getCurrentId() {
         return threadLocal.get();
     }
-
+//is me
     public static void removeCurrentId() {
         threadLocal.remove();
     }
