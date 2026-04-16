@@ -28,6 +28,11 @@
         </if>
         </set>where id = #{id}
     </update>
+    <update id="PutPassword">
+        update employee
+        set password = #{password} ,update_time=#{updateTime},update_user=#{updateUser}
+        where id = #{id}
+    </update>
     <select id="PageGetEmp" resultType="com.sky.entity.Employee">
         SELECT ID, NAME, USERNAME, PASSWORD, PHONE, SEX, ID_NUMBER, STATUS, CREATE_TIME, UPDATE_TIME, CREATE_USER, UPDATE_USER
         FROM employee
@@ -36,5 +41,8 @@
         select id, name, username, password, phone, sex, id_number, status, create_time, update_time, create_user, update_user
         from employee
         where id = #{id}
+    </select>
+    <select id="GetPassword" resultType="java.lang.String">
+        select password from employee where id =#{empId}
     </select>
 </mapper>

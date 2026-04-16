@@ -3,13 +3,16 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
+import com.sky.exception.BaseException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
@@ -101,6 +104,25 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee GetEmpById(Long id) {
         Employee employee = employeeMapper.GetEmpById(id);
         return employee;
+    }
+
+    @Override
+    public void PutPassword(PasswordEditDTO passwordEditDTO) {
+        //库里的密码
+        String s = employeeMapper.GetPassword(BaseContext.getCurrentId());
+        //前端传过来的老密码
+        String oldpassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getOldPassword().getBytes());
+        if(!oldpassword.equals(s) ){
+            throw new PasswordErrorException("旧密码错误");
+        }
+
+        String newPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes());
+        Employee employee = new Employee();
+        employee.setPassword(newPassword);
+        employee.setId(BaseContext.getCurrentId());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.PutPassword(employee);
     }
 
 }

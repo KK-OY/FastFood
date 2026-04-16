@@ -6,6 +6,7 @@ import com.sky.constant.StatusConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
 import com.sky.result.PageResult;
@@ -114,6 +115,12 @@ public class EmployeeController {
     @PutMapping("")
     public Result<String> PutEmp(@RequestBody EmployeeDTO employeeDTO){
         employeeService.PutEmp(employeeDTO);
+        return Result.success();
+    }
+
+    @PutMapping("/editPassword")
+    public Result<String> PutPassword(@RequestBody PasswordEditDTO passwordEditDTO){
+        employeeService.PutPassword(passwordEditDTO);
         return Result.success();
     }
 }
