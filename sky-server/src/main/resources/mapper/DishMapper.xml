@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+
+    <insert id="addFlavors">
+        insert into dish_flavor (dish_id, name, value) VALUES
+                        <foreach collection="flavors" item="f" separator=",">
+                            (#{f.dishId},#{f.name},#{f.value})
+                        </foreach>
+    </insert>
+
+    <insert id="addDish" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            dish (name, category_id, price, image, description, status, create_time, update_time, create_user, update_user)
+        values
+            (#{name},#{categoryId},#{price},#{image},#{description},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})
+    </insert>
+    <update id="PutDish">
+        update dish <set>
+        <if test="name != null">
+            name =#{name},
+        </if>
+        <if test="price != null">
+            price =#{price},
+        </if>
+        <if test="categoryId != null">
+            category_id =#{categoryId},
+        </if>
+        <if test="image != null">
+            image =#{image},
+        </if>
+        <if test="description != null">
+            description =#{description},
+        </if>
+        <if test="status != null">
+            status =#{status},
+        </if>
+        update_time = #{updateTime},
+        update_user = #{updateUser},
+    </set> where id =#{id}
+    </update>
+    <update id="ChangeStatus">
+        update dish set status = #{enable} where id = #{id}
+    </update>
+    <delete id="DeleteDishFlavor">
+        delete FROM dish_flavor Where dish_id in
+                           <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                               #{id}
+                           </foreach>
+    </delete>
+    <delete id="DeleteDish">
+        delete FROM dish Where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="GetPageDish" resultType="com.sky.vo.DishVO">
+        select dish.*,category.name as categoryName
+        from dish
+            left join category
+            on dish.category_id = category.id
+        <where>
+            <if test="name != null and name !=''">
+                dish.name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+              and  dish.category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+               and dish.status = #{status}
+            </if>
+        </where>order by dish.update_time Desc
+    </select>
+    <select id="GetById" resultType="com.sky.vo.DishVO">
+        select id, name, category_id, price, image, description, status,update_time
+        from dish where id =#{id}
+    </select>
+    <select id="GetByIdFavor" resultType="com.sky.entity.DishFlavor">
+        SELECT id, dish_id, name, value from dish_flavor where dish_id =#{id}
+    </select>
+    <select id="GetStatusById" resultType="integer">
+        select SUM(status) from dish
+                      where id
+        in <foreach collection="ids" item="id" separator="," close=")" open="(">
+         #{id}
+    </foreach>
+    </select>
+    <select id="GetDishByCategory" resultType="com.sky.entity.Dish">
+        select  id,name, category_id, price, image, description, status, create_time, update_time, create_user, update_user
+        from dish where category_id = #{categoryId}
+    </select>
+    <select id="CheckSetmealExist" resultType="java.lang.Integer">
+        select COUNT(*) from setmeal_dish
+                        WHERE setmeal_dish.dish_id in <foreach collection="ids" separator="," open="(" close=")" item="id">
+        #{id}
+    </foreach>
+    </select>
+</mapper>

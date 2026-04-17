@@ -7,7 +7,8 @@
         VALUES (#{name},#{username},#{password},#{phone},#{sex},#{idNumber},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser});
     </insert>
     <update id="putStatus">
-        update employee set status = #{enable} where id = #{id}
+        update employee set
+        status = #{enable}, update_user = #{updateUser},update_time = #{updateTime} where id = #{id}
     </update>
     <update id="PutEmp">
         update employee <set>
@@ -26,6 +27,8 @@
         <if test="sex!=null ">
             sex = #{sex},
         </if>
+        update_user = #{updateUser},
+        update_time = #{updateTime},
         </set>where id = #{id}
     </update>
     <update id="PutPassword">
