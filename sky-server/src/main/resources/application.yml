@@ -44,7 +44,7 @@ sky:
     admin-token-name: token
     user-secret-key: kk
     user-ttl: 7777777
-    user-token-name: authorization_code
+    user-token-name: authentication
   alioss:
     endpoint: https://oss-cn-beijing.aliyuncs.com
     bucketName: 3515994942

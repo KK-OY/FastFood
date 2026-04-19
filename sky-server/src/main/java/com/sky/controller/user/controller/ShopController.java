@@ -8,6 +8,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.Cacheable;
 
 import java.io.IOException;
 
@@ -25,6 +26,7 @@ public class ShopController {
         Integer o = (Integer) redisTemplate.opsForValue().get(ShopStatus);
         return Result.success(o);
     }
+
 
     public void Get() throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();

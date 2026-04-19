@@ -50,4 +50,6 @@ public interface DishMapper {
     List<Dish> GetDishByCategory(Long categoryId);
 
     Integer CheckSetmealExist(Long[] ids);
+
+    List<Dish> GetDishByCategoryUser(Dish dish);
 }

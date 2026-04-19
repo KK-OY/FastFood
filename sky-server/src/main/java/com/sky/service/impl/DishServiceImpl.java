@@ -15,17 +15,28 @@ import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 public class DishServiceImpl implements DishService {
     @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
     private DishMapper dishMapper;
+
+    @CacheEvict(cacheNames = "dish_",key = "#dishDTO.categoryId")
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public void add(DishDTO dishDTO) {
@@ -40,6 +51,8 @@ public class DishServiceImpl implements DishService {
             flavors.forEach(s -> {s.setDishId(dish.getId());});
             dishMapper.addFlavors(flavors);
         }
+//        String key ="dish_" + dish.getCategoryId();
+//        redisTemplate.delete(key);
     }
 
     @Override
@@ -56,6 +69,7 @@ public class DishServiceImpl implements DishService {
     //TODO 删除菜品记得把检查对应套餐逻辑写完！！
     @Override
     @Transactional(rollbackFor = {Exception.class})
+    @CacheEvict(cacheNames = "dish_",allEntries = true)
     public void DeleteDish(Long[] ids) {
         //判断菜品状态是否为0
         Integer i = dishMapper.GetStatusById(ids);
@@ -70,7 +84,14 @@ public class DishServiceImpl implements DishService {
 
         dishMapper.DeleteDishFlavor(ids);
         dishMapper.DeleteDish(ids);
+
+//
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+
     }
+
+
     @Transactional(rollbackFor = {Exception.class})
     @Override
     public DishVO GetById(Long id) {
@@ -82,6 +103,7 @@ public class DishServiceImpl implements DishService {
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
+    @CacheEvict(cacheNames = "dish_",allEntries = true)
     public void PutDish(DishDTO dishDTO) {
         Dish d = new Dish();
         BeanUtils.copyProperties(dishDTO,d);
@@ -96,22 +118,56 @@ public class DishServiceImpl implements DishService {
             flavors.forEach(s -> s.setDishId(dishDTO.getId()));
             dishMapper.addFlavors(flavors);
         }
-
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
     }
 
     @Override
+    @CacheEvict(cacheNames = "dish_",allEntries = true)
     public void ChangeStatus(Integer status, Long id) {
         Dish dish = new Dish();
         dish.setStatus(status);
         dish.setId(id);
 
         dishMapper.PutDish(dish);
-
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
     }
 
     @Override
     public List<Dish> GetDishByCategory(Long categoryId) {
         List<Dish> dishes = dishMapper.GetDishByCategory(categoryId);
         return dishes;
+    }
+
+
+    @Cacheable(cacheNames = "dish_" ,key = "#dish.categoryId")
+    public List<DishVO> listWithFlavor(Dish dish) {
+//        String key ="dish_" + dish.getCategoryId();
+//
+//        List<DishVO> dishVOList1 = (List<DishVO>) redisTemplate.opsForValue().get(key);
+//
+//        if(dishVOList1 != null){
+//            return dishVOList1;
+//        }
+
+        List<Dish> dishList = dishMapper.GetDishByCategoryUser(dish);
+
+        List<DishVO> dishVOList = new ArrayList<>();
+
+        for (Dish d : dishList) {
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(d,dishVO);
+
+            //根据菜品id查询对应的口味
+            List<DishFlavor> flavors = dishMapper.GetByIdFavor(d.getId());
+
+            dishVO.setFlavors(flavors);
+            dishVOList.add(dishVO);
+        }
+
+//        redisTemplate.opsForValue().set(key,dishVOList);
+
+        return dishVOList;
     }
 }

@@ -39,9 +39,9 @@ public class AliOssUtil {
         String dir = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
         //生成一个新的不重复的文件名
         String newFileName = UUID.randomUUID() + originalFilename.substring(originalFilename.lastIndexOf("."));
-        String objectName = dir + "/" + newFileName;
+        String objectName =  newFileName;
 
-        // 创建OSSClient实例。
+        // 创建OSSClient实例。dir + "/" +
         ClientBuilderConfiguration clientBuilderConfiguration = new ClientBuilderConfiguration();
         clientBuilderConfiguration.setSignatureVersion(SignVersion.V4);
         OSS ossClient = OSSClientBuilder.create()

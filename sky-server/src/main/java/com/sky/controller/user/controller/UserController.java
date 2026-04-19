@@ -18,8 +18,10 @@ public class UserController {
     @Autowired
     private UserUserServicel userUserServicel;
 
-//    @PostMapping("/login")
-//    public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO){
-//        userUserServicel.login(userLoginDTO);
-//    }
+    @PostMapping("/login")
+    public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO){
+        UserLoginVO login = userUserServicel.login(userLoginDTO);
+
+        return Result.success(login);
+    }
 }
