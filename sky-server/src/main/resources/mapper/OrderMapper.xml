@@ -25,4 +25,75 @@
             (#{o.name},#{o.image},#{o.orderId},#{o.dishId},#{o.setmealId},#{o.dishFlavor},#{o.number},#{o.amount})
         </foreach>
     </insert>
+    <insert id="again">
+        insert into shopping_cart ( name, image, user_id, dish_id, setmeal_id, dish_flavor, number, amount, create_time)
+        values <foreach collection="shoppingCarts" separator="," item="o">
+        (#{o.name},#{o.image},#{o.userId},#{o.dishId},#{o.setmealId},#{o.dishFlavor},#{o.number},#{o.amount},#{o.createTime})
+    </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.sky.entity.Orders">
+            update orders
+            <set>
+                <if test="cancelReason != null and cancelReason!='' ">
+                    cancel_reason=#{cancelReason},
+                </if>
+                <if test="rejectionReason != null and rejectionReason!='' ">
+                    rejection_reason=#{rejectionReason},
+                </if>
+                <if test="cancelTime != null">
+                    cancel_time=#{cancelTime},
+                </if>
+                <if test="payStatus != null">
+                    pay_status=#{payStatus},
+                </if>
+                <if test="payMethod != null">
+                    pay_method=#{payMethod},
+                </if>
+                <if test="checkoutTime != null">
+                    checkout_time=#{checkoutTime},
+                </if>
+                <if test="status != null">
+                    status = #{status},
+                </if>
+                <if test="deliveryTime != null">
+                    delivery_time = #{deliveryTime}
+                </if>
+            </set>
+            where id = #{id}
+        </update>
+    <update id="cancelOrder">
+update orders set status = 6 where id = #{id}
+
+    </update>
+    <select id="getById" resultType="com.sky.entity.Orders">
+        select * from orders where id = #{id}
+    </select>
+    <select id="getByIdOfDetail" resultType="com.sky.entity.OrderDetail">
+        select * from order_detail where order_id = #{id}
+    </select>
+    <select id="GetHistoryOrders" resultType="com.sky.vo.OrderVO" >
+        select * from orders <where>
+        <if test="status !=null and status !=''">status = #{status}</if>
+        </where>
+        order by  id Desc
+    </select>
+    <select id="GetOrdersPage" resultType="com.sky.entity.Orders">
+        select * from orders <where>
+        <if test="status !=null">
+            status = #{status}
+        </if>
+        <if test="phone !=null and phone!=''">
+         and   phone = #{phone}
+        </if>
+        <if test="number !=null">
+        and    number = #{number}
+        </if>
+        <if test="beginTime !=null and endTime !=null">
+        and order_time  between #{beginTime} and #{endTime}
+        </if>
+    </where> order by id Desc
+    </select>
+
+
 </mapper>
