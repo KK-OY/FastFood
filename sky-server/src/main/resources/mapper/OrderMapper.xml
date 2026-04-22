@@ -63,8 +63,23 @@
             where id = #{id}
         </update>
     <update id="cancelOrder">
-update orders set status = 6 where id = #{id}
+update orders set status = 6,cancel_time =NOW() where id = #{id}
 
+    </update>
+    <update id="takeOrders">
+        update orders set status = 3 where id = #{id}
+    </update>
+    <update id="refuseOrders">
+        update orders set status = 6 , rejection_reason = #{rejectionReason}, orders.cancel_time = NOW() where id = #{id}
+    </update>
+    <update id="adminCancelOrder">
+        update orders set status = 6,cancel_reason = #{cancelReason},orders.cancel_time = NOW() where id =#{id}
+    </update>
+    <update id="sendOrder">
+        update orders set  status = 4 where id = #{id}
+    </update>
+    <update id="finishOrders">
+        update orders set  status = 5 where id = #{id}
     </update>
     <select id="getById" resultType="com.sky.entity.Orders">
         select * from orders where id = #{id}
@@ -87,12 +102,25 @@ update orders set status = 6 where id = #{id}
          and   phone = #{phone}
         </if>
         <if test="number !=null">
-        and    number = #{number}
+        and    number like concat('%',#{number},'%')
         </if>
         <if test="beginTime !=null and endTime !=null">
         and order_time  between #{beginTime} and #{endTime}
         </if>
     </where> order by id Desc
+    </select>
+    <select id="getOrdersStatus" resultType="com.sky.vo.OrderStatisticsVO">
+        SELECT
+            -- 统计待接单数量，将结果列命名为 toBeConfirmed
+            SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) AS toBeConfirmed,
+
+            -- 统计待派送数量，将结果列命名为 confirmed
+            SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) AS confirmed,
+
+            -- 统计派送中数量，将结果列命名为 deliveryInProgress
+            SUM(CASE WHEN status = 4 THEN 1 ELSE 0 END) AS deliveryInProgress
+        FROM
+            orders
     </select>
 
 

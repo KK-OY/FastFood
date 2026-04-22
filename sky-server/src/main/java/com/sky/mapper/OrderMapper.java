@@ -1,10 +1,14 @@
 package com.sky.mapper;
 
+import com.sky.dto.OrdersCancelDTO;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.entity.ShoppingCart;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -43,4 +47,16 @@ public interface OrderMapper {
     void again(List<ShoppingCart> shoppingCarts);
 
     List<Orders> GetOrdersPage(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    OrderStatisticsVO getOrdersStatus();
+
+    void takeOrders(OrdersConfirmDTO ordersConfirmDTO);
+
+    void refuseOrders(OrdersRejectionDTO ordersRejectionDTO);
+
+    void adminCancelOrder(OrdersCancelDTO ordersCancelDTO);
+
+    void sendOrder(Long id);
+
+    void finishOrders(Long id);
 }

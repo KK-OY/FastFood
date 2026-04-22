@@ -62,7 +62,7 @@
                 setmeal.category_id = #{categoryId}
             </if>
             <if test="name != null and name !=''">
-               and setmeal.name = #{name}
+               and setmeal.name Like concat ('%',#{name},'%')
             </if>
             <if test="status != null">
                and setmeal.status = #{status}

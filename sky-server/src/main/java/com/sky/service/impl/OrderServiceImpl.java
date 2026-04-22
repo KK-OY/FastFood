@@ -4,9 +4,7 @@ package com.sky.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.*;
 import com.sky.exception.BaseException;
 import com.sky.exception.OrderBusinessException;
@@ -18,6 +16,7 @@ import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.BaseContext;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
@@ -239,5 +238,36 @@ public class OrderServiceImpl implements OrderService {
         Page<Orders> p = (Page<Orders>) orders;
 
         return new PageResult(p.getTotal(),p.getResult());
+    }
+
+    @Override
+    public OrderStatisticsVO getOrdersStatus() {
+        OrderStatisticsVO ordersStatus = orderMapper.getOrdersStatus();
+        return ordersStatus;
+    }
+
+    @Override
+    public void takeOrders(OrdersConfirmDTO ordersConfirmDTO) {
+        orderMapper.takeOrders(ordersConfirmDTO);
+    }
+
+    @Override
+    public void refuseOrders(OrdersRejectionDTO ordersRejectionDTO) {
+        orderMapper.refuseOrders(ordersRejectionDTO);
+    }
+
+    @Override
+    public void adminCancelOrders(OrdersCancelDTO ordersCancelDTO) {
+        orderMapper.adminCancelOrder(ordersCancelDTO);
+    }
+
+    @Override
+    public void sendOrders(Long id) {
+        orderMapper.sendOrder(id);
+    }
+
+    @Override
+    public void finishOrders(Long id) {
+        orderMapper.finishOrders(id);
     }
 }
