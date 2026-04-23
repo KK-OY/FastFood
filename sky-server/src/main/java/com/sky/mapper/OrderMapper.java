@@ -14,6 +14,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -59,4 +60,6 @@ public interface OrderMapper {
     void sendOrder(Long id);
 
     void finishOrders(Long id);
+
+    List<Orders> getStatusAndTime(LocalDateTime Time, Integer status);
 }

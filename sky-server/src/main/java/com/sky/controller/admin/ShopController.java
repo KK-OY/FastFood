@@ -25,4 +25,5 @@ public class ShopController {
         redisTemplate.opsForValue().set(ShopStatus,status);
         return Result.success();
     }
+
 }

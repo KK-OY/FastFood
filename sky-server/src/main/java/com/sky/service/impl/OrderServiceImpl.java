@@ -19,6 +19,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.webServe.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -45,6 +48,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private WebSocketServer webSocketServer;
     @Transactional(rollbackFor = {Exception.class})
     @Override
     public OrderSubmitVO orderSubmit(OrdersSubmitDTO ordersSubmitDTO) {
@@ -166,6 +171,16 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+        //向管理系统推送消息使用websock
+
+        Map mp = new HashMap<>();
+        mp.put("type",1);
+        mp.put("orderId",ordersDB.getId());
+        mp.put("content","订单号"+outTradeNo);
+
+        String jsonString = JSONObject.toJSONString(mp);
+        webSocketServer.sendToAllClient(jsonString);
     }
 
     @Override

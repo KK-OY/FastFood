@@ -122,6 +122,9 @@ update orders set status = 6,cancel_time =NOW() where id = #{id}
         FROM
             orders
     </select>
+    <select id="getStatusAndTime" resultType="com.sky.entity.Orders">
+        select * from orders where status = #{status} and order_time <![CDATA[<]]> #{Time}
+    </select>
 
 
 </mapper>
