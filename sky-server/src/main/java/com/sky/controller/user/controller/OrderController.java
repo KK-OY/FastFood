@@ -68,5 +68,10 @@ public class OrderController {
         return Result.success();
     }
 
+    @GetMapping("/reminder/{id}")
+    public Result<String> urgeOrders(@PathVariable Long id){
+        orderService.urgeOrders(id);
+        return Result.success();
+    }
 
  }

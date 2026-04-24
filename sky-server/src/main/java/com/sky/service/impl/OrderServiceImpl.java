@@ -1,6 +1,7 @@
 package com.sky.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -284,5 +285,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void finishOrders(Long id) {
         orderMapper.finishOrders(id);
+    }
+
+    @Override
+    public void urgeOrders(Long id) {
+        Orders byId = orderMapper.getById(id);
+
+        Map mp = new HashMap<>();
+        mp.put("type",2);
+        mp.put("orderId","订单号"+id);
+        mp.put("content","订单号"+byId.getNumber());
+        String jsonString = JSON.toJSONString(mp);
+
+        webSocketServer.sendToAllClient(jsonString);
     }
 }

@@ -45,4 +45,6 @@ public interface OrderService {
     void sendOrders(Long id);
 
     void finishOrders(Long id);
+
+    void urgeOrders(Long id);
 }
