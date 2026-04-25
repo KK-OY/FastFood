@@ -15,10 +15,7 @@ import com.sky.mapper.UserMapper;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.BaseContext;
-import com.sky.vo.OrderPaymentVO;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderSubmitVO;
-import com.sky.vo.OrderVO;
+import com.sky.vo.*;
 import com.sky.webServe.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,18 +61,6 @@ public class OrderServiceImpl implements OrderService {
         if (shopCart == null || shopCart.isEmpty() ) {
             throw  new BaseException("购物车异常");
         }
-
-        //总金额
-//        BigDecimal sum = BigDecimal.ZERO;
-//        BigDecimal otherSum = BigDecimal.ZERO;
-//        BigDecimal box = new BigDecimal("2");
-//        for(ShoppingCart s : shopCart){
-//            BigDecimal bigDecimal =new BigDecimal( s.getNumber());
-//            BigDecimal total = s.getAmount().multiply(bigDecimal);
-//            sum = sum.add(total);
-//            otherSum = otherSum.add(bigDecimal.multiply(box));
-//        }
-//        sum = sum.add(otherSum);
 
         //插入数据向订单表
         Orders orders =new Orders();
@@ -285,4 +271,45 @@ public class OrderServiceImpl implements OrderService {
     public void finishOrders(Long id) {
         orderMapper.finishOrders(id);
     }
-}
+
+    @Override
+    public OrderOverViewVO getOrderOverView() {
+        /**
+         * 查询订单管理数据
+         *
+         * @return
+         */
+
+            Map map = new HashMap();
+            map.put("begin", LocalDateTime.now().with(LocalTime.MIN));
+            map.put("status", Orders.TO_BE_CONFIRMED);
+
+            //待接单
+            Integer waitingOrders = orderMapper.countByMap(map);
+
+            //待派送
+            map.put("status", Orders.CONFIRMED);
+            Integer deliveredOrders = orderMapper.countByMap(map);
+
+            //已完成
+            map.put("status", Orders.COMPLETED);
+            Integer completedOrders = orderMapper.countByMap(map);
+
+            //已取消
+            map.put("status", Orders.CANCELLED);
+            Integer cancelledOrders = orderMapper.countByMap(map);
+
+            //全部订单
+            map.put("status", null);
+            Integer allOrders = orderMapper.countByMap(map);
+
+            return OrderOverViewVO.builder()
+                    .waitingOrders(waitingOrders)
+                    .deliveredOrders(deliveredOrders)
+                    .completedOrders(completedOrders)
+                    .cancelledOrders(cancelledOrders)
+                    .allOrders(allOrders)
+                    .build();
+        }
+    }
+

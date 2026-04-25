@@ -100,4 +100,15 @@
         select id,name, category_id, price, image, description, status, create_time, update_time, create_user, update_user
         from dish where category_id = #{categoryId} and status = #{status}
     </select>
+    <select id="SalesTop10" resultType="java.util.Map">
+        select order_detail.name,SUM(order_detail.number) sum from order_detail
+                                                                       left join orders on order_detail.order_id = orders.id
+        where orders.status = 5 and orders.order_time between #{begin} and #{end}
+        group by order_detail.name order by SUM(order_detail.number) desc limit  10
+    </select>
+    <select id="dishOverViewVO" resultType="com.sky.vo.DishOverViewVO">
+        select COUNT(case when status = 1 then 1 end ) as sold,count(case when status=0 then 0 end) as discontinued from dish
+    </select>
+    <!--    时间范围内，订单状态已完成，limit10-->
+
 </mapper>

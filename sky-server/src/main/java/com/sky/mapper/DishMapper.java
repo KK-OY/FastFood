@@ -6,11 +6,14 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
 import com.sky.enumeration.OperationType;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface DishMapper {
@@ -52,4 +55,8 @@ public interface DishMapper {
     Integer CheckSetmealExist(Long[] ids);
 
     List<Dish> GetDishByCategoryUser(Dish dish);
+
+    List<Map<String,Object>> SalesTop10(LocalDate begin, LocalDate end);
+
+    DishOverViewVO dishOverViewVO();
 }

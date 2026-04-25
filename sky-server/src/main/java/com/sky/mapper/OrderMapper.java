@@ -8,14 +8,17 @@ import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.entity.ShoppingCart;
+import com.sky.vo.OrderOverViewVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
@@ -62,4 +65,14 @@ public interface OrderMapper {
     void finishOrders(Long id);
 
     List<Orders> getStatusAndTime(LocalDateTime Time, Integer status);
+
+    Integer countByCondition(LocalDateTime beginTime, LocalDateTime endTime, Object o);
+
+    Integer geTodayOrders(LocalDate t,Integer s);
+
+    Double getTodayOrderAmount(LocalDate t);
+
+    Integer countByMap(Map map);
+
+    Double sumByMap(Map map);
 }

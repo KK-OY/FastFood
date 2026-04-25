@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.ReportMapper">
+
+
+    <select id="turnoverStatistics" resultType="java.util.Map">
+        select DATE (order_time) dateList,sum(amount) turnoverList
+        from orders
+        where status = 6
+          and order_time between #{begin}
+            and  #{end}
+        group by dateList
+    </select>
+</mapper>

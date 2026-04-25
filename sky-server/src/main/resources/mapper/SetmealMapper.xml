@@ -98,5 +98,9 @@
             </where>
 
     </select>
+    <select id="getoverviewSetmeals" resultType="com.sky.vo.SetmealOverViewVO">
+
+select COUNT(CASE WHEN status=1 THEN 1 END) AS sold,COUNT(CASE WHEN status = 0 THEN 0 END) AS discontinued from setmeal
+    </select>
 
 </mapper>

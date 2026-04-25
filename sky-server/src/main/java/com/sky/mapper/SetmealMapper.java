@@ -7,6 +7,7 @@ import com.sky.entity.SetmealDish;
 import com.sky.entity.ShoppingCart;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishItemVO;
+import com.sky.vo.SetmealOverViewVO;
 import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -62,4 +63,5 @@ public interface SetmealMapper {
             "where sd.setmeal_id = #{setmealId}")
     List<DishItemVO> getDishItemBySetmealId(Long setmealId);
 
+    SetmealOverViewVO getoverviewSetmeals();
 }

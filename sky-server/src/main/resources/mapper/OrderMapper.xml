@@ -125,6 +125,58 @@ update orders set status = 6,cancel_time =NOW() where id = #{id}
     <select id="getStatusAndTime" resultType="com.sky.entity.Orders">
         select * from orders where status = #{status} and order_time <![CDATA[<]]> #{Time}
     </select>
+    <select id="countByCondition" resultType="java.lang.Integer">
+
+            select count(id) from orders
+            <where>
+                <if test="beginTime != null">
+                    and order_time &gt;= #{beginTime}
+                </if>
+                <if test="endTime != null">
+                    and order_time &lt;= #{endTime}
+                </if>
+                <if test="o != null">
+                    and status = #{o}
+                </if>
+            </where>
+
+    </select>
+    <select id="geTodayOrders" resultType="java.lang.Integer">
+        SELECT COUNT(*) from orders
+        <where>
+            order_time >= #{t}
+            <if test="s !=null">
+              and  status = #{s}
+            </if>
+        </where>
+
+    </select>
+    <select id="getTodayOrderAmount" resultType="java.lang.Double">
+        select COALESCE(SUM(amount), 0)  from orders where order_time >= #{t}
+    </select>
+    <select id="countByMap" resultType="java.lang.Integer">
+        select Count(*) from orders <where>
+        order_time <![CDATA[>]]> #{begin}
+        <if test=" end!=null">and  order_time <![CDATA[<=]]> #{end} </if>
+            <if test=" status!=null">and status = #{status} </if>
+        </where>
+    </select>
+    <select id="sumByMap" resultType="java.lang.Double">
+
+            select sum(amount) from orders
+            <where>
+                <if test="begin != null">
+                    order_time <![CDATA[>]]> #{begin}
+                </if>
+                <if test="end != null">
+                    and order_time <![CDATA[<=]]> #{end}
+                </if>
+                <if test="status != null">
+                    and status = #{status}
+                </if>
+            </where>
+
+    </select>
 
 
 </mapper>
