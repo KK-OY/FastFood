@@ -311,5 +311,18 @@ public class OrderServiceImpl implements OrderService {
                     .allOrders(allOrders)
                     .build();
         }
+
+    @Override
+    public void urgeOrders(Long id) {
+        Map mp = new HashMap<>();
+        mp.put("type",2);
+        mp.put("orderId",id);
+        mp.put("content","订单号"+id);
+
+        String jsonString = JSONObject.toJSONString(mp);
+        webSocketServer.sendToAllClient(jsonString);
     }
+
+
+}
 

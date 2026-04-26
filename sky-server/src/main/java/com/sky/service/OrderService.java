@@ -44,4 +44,6 @@ public interface OrderService {
     void finishOrders(Long id);
 
     OrderOverViewVO getOrderOverView();
+
+    void urgeOrders(Long id);
 }
